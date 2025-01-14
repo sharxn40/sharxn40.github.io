@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Commands: User and Group Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #ffffff;
+        }
+
+        /* Background image styling */
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 300px; /* Adjust height as needed */
+            background: url('bg1.png') no-repeat center center;
+            background-size: cover;
+            z-index: -1; /* Place the background behind content */
+        }
+
+        .content-wrapper {
+            margin-top: 320px; /* Add space below the background image */
+            padding: 20px;
+        }
+
+        .container {
+            padding: 20px;
+            margin: 20px auto;
+            background: #282c48;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 90%;
+            color: #ffffff;
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .example {
+            background: #31365c;
+            padding: 10px;
+            border-left: 4px solid #ffd700;
+            margin-top: 10px;
+        }
+
+        .menu-bar {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #ffd700;
+            color: #1e1e2f;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 10; /* Ensure the menu bar stays above other elements */
+        }
+
+        .menu-bar:hover {
+            background: #ffa500;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            max-height: 200px; /* Limit height for scrolling */
+            overflow-y: auto;
+            background: #282c48;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown a {
+            color: #ffd700;
+            text-decoration: none;
+            display: block;
+            padding: 5px 10px;
+        }
+
+        .dropdown a:hover {
+            background: #31365c;
+        }
+
+        .menu-bar.active + .dropdown {
+            display: block;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .navigation button {
+            padding: 10px 20px;
+            background-color: #ffd700;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .navigation button:hover {
+            background-color: #ffa500;
+        }
+
+        .navigation button:disabled {
+            background-color: #555555;
+            cursor: not-allowed;
+        }
+
+        .command-title i {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+    </style>
+    <script>
+        let currentSection = 0;
+
+        function showSection(index) {
+            const sections = document.querySelectorAll('.container');
+            sections.forEach((section, i) => {
+                section.classList.toggle('active', i === index);
+            });
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === sections.length - 1;
+        }
+
+        function changeSection(direction) {
+            const sections = document.querySelectorAll('.container');
+            currentSection = Math.min(Math.max(0, currentSection + direction), sections.length - 1);
+            showSection(currentSection);
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function jumpToSection(index) {
+            currentSection = index;
+            showSection(index);
+            toggleDropdown();
+        }
+
+        window.onload = () => {
+            showSection(currentSection);
+        };
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            const menuBar = document.querySelector('.menu-bar');
+            const dropdown = document.querySelector('.dropdown');
+            if (!menuBar.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="background-image"></div> <!-- Background image element -->
+
+    <div class="menu-bar" onclick="toggleDropdown()">
+        Menu
+        <div class="dropdown">
+            <a href="#" onclick="jumpToSection(0)">Introduction</a>
+            <a href="#" onclick="jumpToSection(1)">init</a>
+            <a href="#" onclick="jumpToSection(2)">useradd</a>
+            <a href="#" onclick="jumpToSection(3)">usermod</a>
+            <a href="#" onclick="jumpToSection(4)">userdel</a>
+            <a href="#" onclick="jumpToSection(5)">groupadd</a>
+            <a href="#" onclick="jumpToSection(6)">groupmod</a>
+            <a href="#" onclick="jumpToSection(7)">groupdel</a>
+            <a href="#" onclick="jumpToSection(8)">passwd</a>
+            <a href="#" onclick="jumpToSection(9)">sudo</a>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="container">
+            <h1>Welcome to Linux User and Group Management</h1>
+            <p>This webpage is designed to provide an in-depth understanding of Linux commands related to user and group management. Each command is explained with its purpose, usage, and examples to help you master Linux system administration.</p>
+        </div>
+
+        <!-- Example container -->
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-cogs"></i>init</h2>
+            <p>The <code>init</code> command initializes the system and sets it to a specific runlevel. It is the first process started by the kernel after booting.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>init 3</code></pre>
+                Switches the system to runlevel 3.
+            </div>
+            <img src="init.jpg" alt="Screenshot of init command">
+        </div>
+
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-user-plus"></i>useradd</h2>
+            <p>The <code>useradd</code> command is used to create a new user account on the system.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>useradd john</code></pre>
+                Creates a new user named 'john'.
+            </div>
+            <img src="use.jpg" alt="Screenshot of useradd command">
+        </div>
+    
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-user-edit"></i>usermod</h2>
+            <p>The <code>usermod</code> command modifies an existing user account, allowing changes to properties like groups, home directory, and shell.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>usermod -aG sudo john</code></pre>
+                Adds user 'john' to the sudo group.
+            </div>
+            <img src="usermod .jpg" alt="Screenshot of usermod command">
+        </div>
+    
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-user-times"></i>userdel</h2>
+            <p>The <code>userdel</code> command deletes a user account from the system.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>userdel john</code></pre>
+                Deletes the user 'john'.
+            </div>
+            <img src="userdel  .jpg" alt="Screenshot of userdel command">
+        </div>
+    
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-users"></i>groupadd</h2>
+            <p>The <code>groupadd</code> command creates a new group on the system.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>groupadd developers</code></pre>
+                Creates a group named 'developers'.
+            </div>
+            <img src="groupadd .jpg" alt="Screenshot of groupadd command">
+        </div>
+    
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-user-cog"></i>groupmod</h2>
+            <p>The <code>groupmod</code> command modifies an existing group, such as changing its name.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>groupmod -n engineers developers</code></pre>
+                Renames the group 'developers' to 'engineers'.
+            </div>
+            <img src="groupmod.jpg" alt="Screenshot of groupmod command">
+        </div>
+    
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-user-times"></i>groupdel</h2>
+            <p>The <code>groupdel</code> command removes a group from the system.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>groupdel engineers</code></pre>
+                Deletes the group 'engineers'.
+            </div>
+            <img src="groupdel .jpg" alt="Screenshot of groupdel command">
+        </div>
+    
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-key"></i>passwd</h2>
+            <p>The <code>passwd</code> command is used to change a user's password or update password-related information.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>passwd john</code></pre>
+                Changes the password for user 'john'.
+            </div>
+            <img src="passwd .jpg" alt="Screenshot of passwd command">
+        </div>
+    
+        <div class="container">
+            <h2 class="command-title"><i class="fas fa-shield-alt"></i>sudo</h2>
+            <p>The <code>sudo</code> command allows a permitted user to execute a command as the superuser or another user, as specified by the security policy.</p>
+            <div class="example">
+                <strong>Example:</strong>
+                <pre><code>sudo apt-get update</code></pre>
+                Updates the package lists as a superuser.
+            </div>
+            <img src="sudo .jpg" alt="Screenshot of sudo command">
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSection(-1)">Previous</button>
+            <button id="nextBtn" onclick="changeSection(1)">Next</button>
+        </div>
+    </div>
+</body>
+</html>
